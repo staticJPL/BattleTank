@@ -29,6 +29,5 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	ATank* GetControlledTank() const;
-
 	// Start the Tank moving the barrel so that a shot would hit where the cross hair intersects the world.
 };
