@@ -24,6 +24,9 @@ protected:
 	virtual void BeginPlay() override;
 	UTankAimingComponent* TankAimingComponent = nullptr;
 
+	UFUNCTION(BlueprintCallable, Category = Fire)
+	void Fire();
+
 private:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -36,6 +39,4 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = Firing)
 	float LaunchSpeed = 10000; // 1000 m/s ;)
-
-	
 };
