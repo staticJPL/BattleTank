@@ -31,6 +31,9 @@ private:
 	UFUNCTION(BlueprintCallable, Category = Setup)
 	void SetBarrelReference(UTankBarrel* BarrelToSet);
 
+	UFUNCTION(BlueprintCallable, Category = Setup)
+	void SetTurretReference(UTankTurret* TurretToSet);
+
 	UPROPERTY(EditAnywhere, Category = Firing)
 	float LaunchSpeed = 10000; // 1000 m/s ;)
 
