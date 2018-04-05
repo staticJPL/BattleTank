@@ -1,9 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Public/Tank.h"
-#include "Public/Projectile.h"
-#include "Public/TankAimingComponent.h"
-#include "Public/TankBarrel.h"
+#include "Tank.h"
+#include "Projectile.h"
+#include "TankAimingComponent.h"
+#include "TankMovementComponent.h"
+#include "TankBarrel.h"
 
 
 // Sets default values
@@ -46,15 +47,18 @@ void  ATank::AimAt(FVector HitLocation) {
 	TankAimingComponent->AimAt(HitLocation,LaunchSpeed);
 }
 
-void  ATank::Fire() {
+void ATank::Fire() {
+	bool isReloaded = (FPlatformTime::Seconds() - LastFireTime) > ReloadTimeInSeconds;
 	UE_LOG(LogTemp, Warning, TEXT("Tank Fired"));
-	if (!Barrel) { return; }
-	// Spawn a projectile at the socket location on the barrel
-	auto Projectile = GetWorld()->SpawnActor<AProjectile>(
-		ProjectileBlueprint,
-		Barrel->GetSocketLocation(FName("Projectile")),
-		Barrel->GetSocketRotation(FName("Projectile"))
-		);
-
-	Projectile->LaunchProjectile(LaunchSpeed);
+	if (Barrel && isReloaded) { 
+		// Spawn a projectile at the socket location on the barrel
+		auto Projectile = GetWorld()->SpawnActor<AProjectile>(
+			ProjectileBlueprint,
+			Barrel->GetSocketLocation(FName("Projectile")),
+			Barrel->GetSocketRotation(FName("Projectile"))
+			);
+		Projectile->LaunchProjectile(LaunchSpeed);
+		LastFireTime = FPlatformTime::Seconds();
+	}
+	return;
 }
