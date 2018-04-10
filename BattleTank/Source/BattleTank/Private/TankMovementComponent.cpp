@@ -1,5 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "TankMovementComponent.h"
+#include "BattleTank.h"
 #include "TankTrack.h"
 
 
@@ -17,9 +18,10 @@ void UTankMovementComponent::RequestDirectMove(const FVector& MoveVelocity, bool
 
 void UTankMovementComponent::IntendMoveForward(float Throw) {
 
-	UE_LOG(LogTemp, Warning, TEXT("Intend Move forward throw: %f"), Throw)
-	LeftTrack->SetThrottle(Throw);
-	RightTrack->SetThrottle(Throw);
+	//UE_LOG(LogTemp, Warning, TEXT("Intend Move forward throw: %f"), Throw)
+	if (!ensure(LeftTrack && RightTrack)) { return; }
+		LeftTrack->SetThrottle(Throw);
+		RightTrack->SetThrottle(Throw);
 }
 
 void  UTankMovementComponent::Initialise(UTankTrack* LeftTrackToSet, UTankTrack* RightTrackToSet) {
@@ -30,7 +32,7 @@ void  UTankMovementComponent::Initialise(UTankTrack* LeftTrackToSet, UTankTrack*
 }
 
 void UTankMovementComponent::IntendMoveRight(float Throw) {
-	if (!LeftTrack|| !RightTrack) { return; }
+	if (!ensure(LeftTrack && RightTrack)) { return; }
 	LeftTrack->SetThrottle(Throw);
 	RightTrack->SetThrottle(-Throw);
 }

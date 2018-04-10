@@ -9,7 +9,6 @@
 class UTankBarrel;
 class UTankAimingComponent;
 class AProjectile;
-class UTankMovementComponent;
 
 UCLASS()
 class BATTLETANK_API ATank : public APawn
@@ -21,36 +20,29 @@ public:
 	ATank();
 	void AimAt(FVector HitLocation);
 
-	UFUNCTION(BlueprintCallable, Category = Fire)
+	virtual void BeginPlay() override;
+
+	UFUNCTION(BlueprintCallable, Category = "Fire")
 	void Fire();
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+
+	UPROPERTY(BlueprintReadOnly)
 	UTankAimingComponent* TankAimingComponent = nullptr;
 
-
 private:
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UFUNCTION(BlueprintCallable, Category = Setup)
-	void SetBarrelReference(UTankBarrel* BarrelToSet);
-
-	UFUNCTION(BlueprintCallable, Category = Setup)
-	void SetTurretReference(UTankTurret* TurretToSet);
-
-	UPROPERTY(EditDefaultsOnly, Category = Firing)
+	//TODO need to remove once firing is moved.
+	UPROPERTY(EditDefaultsOnly, Category = "Firing")
 	float LaunchSpeed = 10000; // 1000 m/s ;)
 
 	// Tank needs to know something about the projectile which is C++ and a Blueprint
-	UPROPERTY(EditDefaultsOnly, Category = Setup)
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	// Set a projectile blueprint on every instance of Tank
 	TSubclassOf<AProjectile> ProjectileBlueprint;
 	// Could do this too  UClass* ProjectileBlueprint but TSubclass is cleaner for drop down in the blueprint setup;
 	//Local Barrel reference for spawning projectiles
 	UTankBarrel* Barrel = nullptr;
-	
 	float ReloadTimeInSeconds = 3;
 	double LastFireTime = 0;
 

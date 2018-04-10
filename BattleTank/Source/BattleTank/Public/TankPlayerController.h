@@ -7,6 +7,7 @@
 #include "TankPlayerController.generated.h"
 
 class ATank;
+class UTankAimingComponent;
 /**
  * 
  */
@@ -18,16 +19,22 @@ private:
 	bool GetSightRayHitLocation(FVector &Hitlocation) const;
 	void AimTowardsCrosshair();
 	UPROPERTY(EditDefaultsOnly)
-		float CrossHairXLocation = 0.5;
+	float CrossHairXLocation = 0.5;
 	UPROPERTY(EditDefaultsOnly)
-		float CrossHairYLocation = 0.33333;
+	float CrossHairYLocation = 0.33333;
 	UPROPERTY(EditDefaultsOnly)
-		float LineTraceRange = 1000000; // 10km max.
+	float LineTraceRange = 1000000; // 10km max.
 	bool GetLookDirection(FVector2D ScreenLocation, FVector& LookDirection) const;
 	bool GetLookVectorHitLocation(FVector LookDirection, FVector& HitLocation) const;
+
+protected:
+	UFUNCTION(BlueprintCallable, Category = "Setup")
+	ATank* GetControlledTank() const;
+	UFUNCTION(BlueprintImplementableEvent, Category = "Setup")
+	void FoundAimingComponent(UTankAimingComponent* AimCompRef);
+
 public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
-	ATank* GetControlledTank() const;
 	// Start the Tank moving the barrel so that a shot would hit where the cross hair intersects the world.
 };
