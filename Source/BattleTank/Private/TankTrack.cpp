@@ -37,6 +37,7 @@ void UTankTrack::ApplySidewaysForce()
 	auto DeltaTime = GetWorld()->GetDeltaSeconds();
 	auto SlippageSpeed = FVector::DotProduct(GetRightVector(), GetComponentVelocity());
 
+
 	// Acceleration = V/T
 	auto CorrectionAcceleration = (-SlippageSpeed / (DeltaTime)) * GetRightVector();
 
