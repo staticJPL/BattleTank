@@ -18,6 +18,11 @@ UTankAimingComponent::UTankAimingComponent()
 	// ...
 }
 
+EFiringState UTankAimingComponent::GetFiringState() const
+{
+	return FiringState;
+}
+
 void UTankAimingComponent::BeginPlay() {
 
 	LastFireTime = FPlatformTime::Seconds();

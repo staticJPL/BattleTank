@@ -28,6 +28,12 @@ void ATankAIController::Tick(float DeltaTime)
 	AimingComponent->AimAt(PlayerTank->GetActorLocation());
 
 	// TODO fix firing
-	AimingComponent->Fire(); // TODO limit firing rate
+	// If Aiming or Locked, need to get state of tank aiming component don't make the aiming component public
+
+	if (AimingComponent->GetFiringState() == EFiringState::Locked) {
+
+		AimingComponent->Fire(); 
+	}
+	
 	
 }
