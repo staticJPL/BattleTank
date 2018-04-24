@@ -22,7 +22,11 @@ protected:
 
 private:
 	virtual void BeginPlay() override;
+	// when possessed
+	virtual void SetPawn(APawn* InPawn) override;
 
 	virtual void Tick(float DeltaSeconds) override;
-	
+
+	UFUNCTION()
+	void OnPossedTankDeath();
 };
