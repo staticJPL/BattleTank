@@ -3,7 +3,8 @@
 #include "BattleTank.h"
 #include "TankAimingComponent.h"
 #include "TankAIController.h"
-#include "Tank.h" // So we can implement on death
+#include "Tank.h" // So we can impliment OnDeath
+
 // Depends on movement component via pathfinding system
 
 void ATankAIController::BeginPlay()
@@ -11,22 +12,22 @@ void ATankAIController::BeginPlay()
 	Super::BeginPlay();
 }
 
-void ATankAIController::SetPawn(APawn* InPawn) {
-
+void ATankAIController::SetPawn(APawn* InPawn)
+{
 	Super::SetPawn(InPawn);
-	if (InPawn) {
-
+	if (InPawn)
+	{
 		auto PossessedTank = Cast<ATank>(InPawn);
-		if (!ensure(PossessedTank)) { return; }
+		if (!PossessedTank) { return; }
 
-		// Subscribe our local method to the tanks death event
+		// Subscribe our local method to the tank's death event
 		PossessedTank->OnDeath.AddUniqueDynamic(this, &ATankAIController::OnPossedTankDeath);
 	}
 }
 
-void ATankAIController::OnPossedTankDeath() {
-	UE_LOG(LogTemp, Warning, TEXT("Recieved!"));
-	if (!GetPawn()){return; }
+void ATankAIController::OnPossedTankDeath()
+{
+	if (!ensure(GetPawn())) { return; } // TODO remove if ok
 	GetPawn()->DetachFromControllerPendingDestroy();
 }
 
@@ -38,7 +39,7 @@ void ATankAIController::Tick(float DeltaTime)
 	auto PlayerTank = GetWorld()->GetFirstPlayerController()->GetPawn();
 	auto ControlledTank = GetPawn();
 
-	if (!ensure(PlayerTank && ControlledTank)) { return; }
+	if (!(PlayerTank && ControlledTank)) { return; }
 	
 	// Move towards the player
 	MoveToActor(PlayerTank, AcceptanceRadius); // TODO check radius is in cm
@@ -47,13 +48,8 @@ void ATankAIController::Tick(float DeltaTime)
 	auto AimingComponent = ControlledTank->FindComponentByClass<UTankAimingComponent>();
 	AimingComponent->AimAt(PlayerTank->GetActorLocation());
 
-	// TODO fix firing
-	// If Aiming or Locked, need to get state of tank aiming component don't make the aiming component public
-
-	if (AimingComponent->GetFiringState() == EFiringState::Locked) {
-
-		AimingComponent->Fire(); 
+	if (AimingComponent->GetFiringState() == EFiringState::Locked)
+	{
+		AimingComponent->Fire(); // TODO limit firing rate
 	}
-	
-	
 }

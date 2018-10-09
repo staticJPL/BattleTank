@@ -5,8 +5,6 @@
 #include "AIController.h"
 #include "TankAIController.generated.h"
 
-class ATank;
-
 /**
  * 
  */
@@ -17,12 +15,12 @@ class BATTLETANK_API ATankAIController : public AAIController
 
 protected:
 	// How close can the AI tank get
-	UPROPERTY(EditAnywhere, Category ="Setup") // consider EditDefaultsOnly
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	float AcceptanceRadius = 8000;
 
 private:
 	virtual void BeginPlay() override;
-	// when possessed
+
 	virtual void SetPawn(APawn* InPawn) override;
 
 	virtual void Tick(float DeltaSeconds) override;

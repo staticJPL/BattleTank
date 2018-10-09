@@ -7,7 +7,7 @@
 // Sets default values
 AProjectile::AProjectile()
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+ 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
 	CollisionMesh = CreateDefaultSubobject<UStaticMeshComponent>(FName("Collision Mesh"));
@@ -33,44 +33,7 @@ AProjectile::AProjectile()
 void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	// This is interesting call, It tripped me up, I thought the actor which is projectile needed the hit override but its actually the collisionmesh on hit that is of the actor that is being used.
 	CollisionMesh->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);
-}
-
-void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit) {
-	LaunchBlast->Deactivate();
-	ImpactBlast->Activate();
-	ExplosionForce->FireImpulse();
-	SetRootComponent(ImpactBlast);
-	CollisionMesh->DestroyComponent();
-
-	// Damage Enemy Tank
-
-	UGameplayStatics::ApplyRadialDamage(
-		this,
-		ProjectileDamage,
-		GetActorLocation(),
-		ExplosionForce->Radius, // For Consistency
-		UDamageType::StaticClass(),
-		TArray<AActor*>() // Empty Array Damage All Actors
-		);
-
-	FTimerHandle TimeHandle;
-	GetWorld()->GetTimerManager().SetTimer(
-		TimeHandle,
-		this,
-		&AProjectile::OnTimerExpire,
-		1.0f,
-		true,
-		DestroyDelay
-	);
-
-}
-
-// Called every frame
-void AProjectile::Tick( float DeltaTime )
-{
-	Super::Tick( DeltaTime );
 }
 
 void AProjectile::LaunchProjectile(float Speed)
@@ -79,6 +42,29 @@ void AProjectile::LaunchProjectile(float Speed)
 	ProjectileMovement->Activate();
 }
 
-void AProjectile::OnTimerExpire() {
+void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
+{
+	LaunchBlast->Deactivate();
+	ImpactBlast->Activate();
+	ExplosionForce->FireImpulse();
+	
+	SetRootComponent(ImpactBlast);
+	CollisionMesh->DestroyComponent();
+
+	UGameplayStatics::ApplyRadialDamage(
+		this,
+		ProjectileDamage,
+		GetActorLocation(),
+		ExplosionForce->Radius, // for consistancy
+		UDamageType::StaticClass(),
+		TArray<AActor*>() // damage all actors
+	);
+
+	FTimerHandle Timer;
+	GetWorld()->GetTimerManager().SetTimer(Timer, this, &AProjectile::OnTimerExpire, DestroyDelay, false);
+}
+
+void AProjectile::OnTimerExpire()
+{
 	Destroy();
 }
